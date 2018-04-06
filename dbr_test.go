@@ -228,7 +228,6 @@ func TestPostgresReturning(t *testing.T) {
 		var person dbrPerson
 		err := sess.InsertInto("dbr_people").Columns("email").Values("kokonotsu@jibunde.com").
 			Returning("id").Load(&person.Id)
-		fmt.Printf("err: %s\n", err)
 		assert.Error(t, err)
 		assert.Equal(t, person.Id, int64(0))
 	})
