@@ -214,12 +214,24 @@ func TestBasicCRUD(t *testing.T) {
 }
 
 func TestPostgresReturning(t *testing.T) {
-	sess := postgresSession
-	var person dbrPerson
-	err := sess.InsertInto("dbr_people").Columns("name").Record(&person).
-		Returning("id").Load(&person.Id)
-	assert.NoError(t, err)
-	assert.True(t, person.Id > 0)
+	t.Run("with no error", func(t *testing.T) {
+		sess := postgresSession
+		var person dbrPerson
+		err := sess.InsertInto("dbr_people").Columns("name").Record(&person).
+			Returning("id").Load(&person.Id)
+		assert.NoError(t, err)
+		assert.True(t, person.Id > 0)
+	})
+
+	t.Run("with error", func(t *testing.T) {
+		sess := postgresSession
+		var person dbrPerson
+		err := sess.InsertInto("dbr_people").Columns("email").Values("kokonotsu@jibunde.com").
+			Returning("id").Load(&person.Id)
+		fmt.Printf("err: %s\n", err)
+		assert.Error(t, err)
+		assert.Equal(t, person.Id, int64(0))
+	})
 }
 
 func TestTimeout(t *testing.T) {

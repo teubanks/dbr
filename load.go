@@ -44,6 +44,11 @@ func Load(rows *sql.Rows, value interface{}) (int, error) {
 			break
 		}
 	}
+
+	if rows.Err() != nil {
+		return 0, rows.Err()
+	}
+
 	return count, nil
 }
 
